@@ -12,3 +12,11 @@ function joinAllTables() {
         console.log(res)
 })
 }
+
+function viewAllEmployees() {
+    let query = "SELECT * FROM ((employee INNER JOIN role ON employee.id = role.id) INNER JOIN department ON role.id = department.id)"
+    connection.query(query, function(err, res) {
+        if(err) throw err;
+        console.log(res)
+    });
+}
