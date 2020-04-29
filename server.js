@@ -35,6 +35,9 @@ function startApp() {
                 "VIEW roles",
                 "VIEW employees",
                 "UPDATE employee role",
+                "DELETE employee",
+                "DELETE role",
+                "DELETE department",
                 "EXIT"
             ]
         })
@@ -71,6 +74,18 @@ function startApp() {
 
                 case "UPDATE employee role":
                     updateEmployeeRole();
+                    break;
+
+                case "DELETE employee":
+                    deleteEmployee();
+                    break;
+
+                case "DELETE role":
+                    deleteRole();
+                    break;
+
+                case "DELETE department":
+                    deleteDepartment();
                     break;
 
                 case "EXIT":
@@ -119,10 +134,9 @@ function addRole() {
       .then(function(answer) {
         connection.query("INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)", [answer.roleName, answer.roleSalary, answer.deptID], function(err, res) {
           if (err) throw err;
-          console.table(res);
-        //   console.log("=============================================================")
-        //   console.log("========== " + answer.roleName + " added to roles! ==========")
-        //   console.log("=============================================================")
+          console.log("=============================================================")
+          console.log("========== " + answer.roleName + " added to roles! ==========")
+          console.log("=============================================================")
           startApp();
         });
       });
@@ -160,7 +174,6 @@ function addEmployee() {
 
 
 function viewDepartment() {
-    console.log("Hello")
     connection.query("SELECT * FROM department", function(err, res) {
         if (err) throw err;
         console.log("==============================================================")
@@ -222,4 +235,65 @@ function displayAll () {
         console.table(res)
         startApp();
     });
+}
+
+function deleteEmployee() {
+    inquirer
+      .prompt([
+        {
+          type: "input",
+          message: "Please enter the ID number of the employee you would like to delete.",
+          name: "employeeID"
+        }
+      ])
+      .then(function(answer) {
+    connection.query("DELETE FROM employee WHERE id = ?", [answer.employeeID], function(err, result) {
+        if (err) throw err
+          console.log("===================================================================================")
+          console.log("=============================== Employee  Deleted! ================================")
+          console.log("===================================================================================")
+          startApp();
+        });
+      });
+}
+
+
+function deleteRole() {
+    inquirer
+      .prompt([
+        {
+          type: "input",
+          message: "Please enter the ID number of the role you would like to delete.",
+          name: "roleID"
+        }
+      ])
+      .then(function(answer) {
+    connection.query("DELETE FROM role WHERE id = ?", [answer.roleID], function(err, result) {
+        if (err) throw err
+          console.log("===================================================================================")
+          console.log("================================= Role Deleted! ===================================")
+          console.log("===================================================================================")
+          startApp();
+        });
+      });
+}
+
+function deleteDepartment() {
+    inquirer
+      .prompt([
+        {
+          type: "input",
+          message: "Please enter the ID number of the department you would like to delete.",
+          name: "departmentID"
+        }
+      ])
+      .then(function(answer) {
+    connection.query("DELETE FROM department WHERE id = ?", [answer.departmentID], function(err, result) {
+        if (err) throw err
+          console.log("===================================================================================")
+          console.log("============================== Department Deleted! ================================")
+          console.log("===================================================================================")
+          startApp();
+        });
+      });
 }
