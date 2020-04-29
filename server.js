@@ -52,15 +52,15 @@ function startApp() {
                     addDepartment();
                     break;
 
-                case "VIEW employee":
+                case "VIEW employees":
                     viewEmployee();
                     break;
 
-                case "VIEW role":
+                case "VIEW roles":
                     viewRole();
                     break;
 
-                case "VIEW department":
+                case "VIEW departments":
                     viewDepartment();
                     break;
 
@@ -84,8 +84,103 @@ function addDepartment() {
     }).then(function(answer){
         connection.query("INSERT INTO department (name) VALUES (?)", [answer.deptName] , function(err, res) {
             if (err) throw err;
-            console.table(res)
+            console.log("==============================================================")
+            console.log("========== " + answer.deptName + "department added! ==========")
+            console.log("==============================================================")
             startApp();
     })
     })
+}
+
+function addRole() {
+    inquirer
+      .prompt([
+        {
+          type: "input",
+          message: "What's the role name?",
+          name: "roleName"
+        },
+        {
+          type: "input",
+          message: "What is the salary?",
+          name: "roleSalary"
+        },
+        {
+          type: "input",
+          message: "What is the department ID number?",
+          name: "deptID"
+        }
+      ])
+      .then(function(answer) {
+        connection.query("INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)", [answer.roleName, answer.roleSalary, answer.deptID], function(err, res) {
+          if (err) throw err;
+          console.log("=============================================================")
+          console.log("========== " + answer.roleName + " added to roles! ==========")
+          console.log("=============================================================")
+          startApp();
+        });
+      });
+}
+
+function addEmployee() {
+    inquirer
+      .prompt([
+        {
+          type: "input",
+          message: "What's their first name?",
+          name: "first_name"
+        },
+        {
+          type: "input",
+          message: "What's their last name?",
+          name: "last_name"
+        },
+        {
+          type: "input",
+          message: "What is their role ID number?",
+          name: "role_id"
+        }
+      ])
+      .then(function(answer) {
+        connection.query("INSERT INTO employee (first_name, last_name, role_id) VALUES (?, ?, ?)", [answer.first_name, answer.last_name, answer.role_id], function(err, res) {
+          if (err) throw err;
+          console.log("===================================================================================")
+          console.log("==================== " + answer.first_name + " " + answer.last_name + "department added! ====================")
+          console.log("===================================================================================")
+          startApp();
+        });
+      });
+}
+
+
+function viewDepartment() {
+    console.log("Hello")
+    connection.query("SELECT * FROM department", function(err, res) {
+        if (err) throw err;
+        console.log("==============================================================")
+        console.table(res);
+        console.log("==============================================================")
+        startApp();
+      });
+}
+
+
+function viewRole() {
+    connection.query("SELECT * FROM role", function(err, res) {
+        if (err) throw err;
+        console.log("==============================================================")
+        console.table(res);
+        console.log("==============================================================")
+        startApp();
+      });
+}
+
+function viewEmployee() {
+    connection.query("SELECT * FROM employee", function(err, res) {
+        if (err) throw err;
+        console.log("==============================================================")
+        console.table(res);
+        console.log("==============================================================")
+        startApp();
+      });
 }
