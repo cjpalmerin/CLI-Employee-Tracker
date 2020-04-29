@@ -27,6 +27,7 @@ function startApp() {
             type: "list",
             message: "What would you like to do?",
             choices: [
+                "===VIEW ALL EMPLOYEE DATA===",
                 "ADD department",
                 "ADD role",
                 "ADD employee",
@@ -39,6 +40,10 @@ function startApp() {
         })
         .then(function (answer) {
             switch (answer.action) {
+                case "===VIEW ALL EMPLOYEE DATA===":
+                    displayAll();
+                    break;
+
                 case "ADD employee":
                     addEmployee();
                     break;
@@ -64,8 +69,8 @@ function startApp() {
                     viewDepartment();
                     break;
 
-                case "UPDATE employee roles":
-                    updateEmployeeRoles();
+                case "UPDATE employee role":
+                    updateEmployeeRole();
                     break;
 
                 case "EXIT":
@@ -97,7 +102,7 @@ function addRole() {
       .prompt([
         {
           type: "input",
-          message: "What's the role name?",
+          message: "What's the role title?",
           name: "roleName"
         },
         {
@@ -114,9 +119,10 @@ function addRole() {
       .then(function(answer) {
         connection.query("INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)", [answer.roleName, answer.roleSalary, answer.deptID], function(err, res) {
           if (err) throw err;
-          console.log("=============================================================")
-          console.log("========== " + answer.roleName + " added to roles! ==========")
-          console.log("=============================================================")
+          console.table(res);
+        //   console.log("=============================================================")
+        //   console.log("========== " + answer.roleName + " added to roles! ==========")
+        //   console.log("=============================================================")
           startApp();
         });
       });
@@ -145,7 +151,7 @@ function addEmployee() {
         connection.query("INSERT INTO employee (first_name, last_name, role_id) VALUES (?, ?, ?)", [answer.first_name, answer.last_name, answer.role_id], function(err, res) {
           if (err) throw err;
           console.log("===================================================================================")
-          console.log("==================== " + answer.first_name + " " + answer.last_name + "department added! ====================")
+          console.log("==================== " + answer.first_name + " " + answer.last_name + " added! ====================")
           console.log("===================================================================================")
           startApp();
         });
@@ -183,4 +189,37 @@ function viewEmployee() {
         console.log("==============================================================")
         startApp();
       });
+}
+
+function updateEmployeeRole() {
+    inquirer
+      .prompt([
+        {
+          type: "input",
+          message: "Please enter the first name of the employee you would like to update.",
+          name: "first_name"
+        },
+        {
+          type: "input",
+          message: "What is their new role?",
+          name: "newRole"
+        }
+      ])
+      .then(function(answer) {
+  
+        connection.query('UPDATE employee SET role_id=? WHERE first_name= ?',[answer.newRole, answer.first_name],function(err, res) {
+          if (err) throw err;
+          console.table(res);
+          startApp();
+        });
+      });
+  }
+
+function displayAll () {
+    let query = "SELECT * FROM ((employee INNER JOIN role ON employee.id = role.id) INNER JOIN department ON role.id = department.id)"
+    connection.query(query, function(err, res) {
+        if(err) throw err;
+        console.table(res)
+        startApp();
+    });
 }
