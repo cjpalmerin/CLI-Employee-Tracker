@@ -27,7 +27,6 @@ function startApp() {
             type: "list",
             message: "What would you like to do?",
             choices: [
-                "===VIEW ALL EMPLOYEE DATA===",
                 "ADD department",
                 "ADD role",
                 "ADD employee",
@@ -43,10 +42,6 @@ function startApp() {
         })
         .then(function (answer) {
             switch (answer.action) {
-                case "===VIEW ALL EMPLOYEE DATA===":
-                    displayAll();
-                    break;
-
                 case "ADD employee":
                     addEmployee();
                     break;
@@ -105,7 +100,7 @@ function addDepartment() {
         connection.query("INSERT INTO department (name) VALUES (?)", [answer.deptName] , function(err, res) {
             if (err) throw err;
             console.log("==============================================================")
-            console.log("========== " + answer.deptName + "department added! ==========")
+            console.log("========== " + answer.deptName + " department added! ==========")
             console.log("==============================================================")
             startApp();
     })
@@ -227,15 +222,6 @@ function updateEmployeeRole() {
         });
       });
   }
-
-function displayAll () {
-    let query = "SELECT * FROM ((employee INNER JOIN role ON employee.id = role.id) INNER JOIN department ON role.id = department.id)"
-    connection.query(query, function(err, res) {
-        if(err) throw err;
-        console.table(res)
-        startApp();
-    });
-}
 
 function deleteEmployee() {
     inquirer
